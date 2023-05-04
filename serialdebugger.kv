@@ -84,7 +84,7 @@
                         size_hint_x: 0.382
                     Spinner:
                         id: id_baudrate
-                        text: '9600'
+                        text: '115200'
                         values: ('1200', '2400', '4800', '9600', '19200', '38400', '57600', '115200')
                         size_hint_y: None
                         height: '30dp'
@@ -337,7 +337,18 @@
                     text: 'Clear Receive Area'
                     on_release: root.clear_recvdata()
             BoxLayout:
-                size_hint_y: 0.7
+                orientation: 'horizontal'
+                size_hint_y: 0.1
+                TextInput:
+                    id: lb
+                Button:
+                    text: 'Start update'
+                    on_press: root.start()
+                Button:
+                    text: 'Stop update'
+                    on_press: root.stop()
+            BoxLayout:
+                size_hint_y: 0.6
                 TextInput:
                     id: console_text
                     text: ''
