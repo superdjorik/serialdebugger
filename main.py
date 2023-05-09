@@ -11,6 +11,7 @@ if platform == 'android':
     from usb4a import usb
     from usbserial4a import serial4a
 else:
+    from serial.tools import list_ports
     from serial import Serial, SerialException, serialutil
 
 
@@ -152,16 +153,38 @@ class Root(FloatLayout):
         self.id_commport.values = self.serial_port_list
         self.id_commport.text = '-' if not self.serial_port_list else self.serial_port_list[0]
 
+    # def update_comm_ports(self):
+    #     self.serial_port_list = []
+    #     try:
+    #         from serial.tools.list_ports import comports
+    #     except ImportError:
+    #         return None
+    #     if comports:
+    #         com_ports_list = list(comports())
+    #         for port in com_ports_list:
+    #             self.serial_port_list.append(port[0])
+
     def update_comm_ports(self):
         self.serial_port_list = []
-        try:
-            from serial.tools.list_ports import comports
-        except ImportError:
-            return None
-        if comports:
-            com_ports_list = list(comports())
-            for port in com_ports_list:
-                self.serial_port_list.append(port[0])
+
+        if platform == 'android':
+            usb_device_list = usb.get_usb_device_list()
+            self.serial_port_list = [
+                device.getDeviceName() for device in usb_device_list
+            ]
+        else:
+            usb_device_list = list_ports.comports()
+            self.serial_port_list = [port.device for port in usb_device_list]
+        #
+        #
+        # try:
+        #     from serial.tools.list_ports import comports
+        # except ImportError:
+        #     return None
+        # if comports:
+        #     com_ports_list = list(comports())
+        #     for port in com_ports_list:
+        #         self.serial_port_list.append(port[0])
 
     def update_port(self, dt):  # dt is the delta time
         # update commport options
@@ -171,39 +194,36 @@ class Root(FloatLayout):
     def update_serialread(self, dt):
         if not self.serial_port.print_read_task():
             # exception in read, close port
-            self.console_text.text += 'Port {} disconnected or has issue, close it, please retry\n'.format(
+            self.console_text.text += 'Порт {} отключён. Переподключитесь снова\n'.format(
                 self.serial_port.select_port)
-            self.id_switch_serial.text = 'Open'
+            self.id_switch_serial.text = 'Подключиться'
             self.id_indicator.color = [1, 0, 0, 1]
             self.id_commport.disabled = False
             self.id_baudrate.disabled = False
-            self.id_checksum.disabled = False
-            self.id_stopbit.disabled = False
-            self.id_databit.disabled = False
             self.serial_port.close_port()
 
 
     def on_commport_change(self, value):
-        self.console_text.text += 'comm port: {} \n'.format(value)
+        self.console_text.text += 'Порт: {} \n'.format(value)
         self.serial_port.select_port = value
 
     def on_baudrate_change(self, value):
-        self.console_text.text += 'baudrate: {} \n'.format(value)
+        self.console_text.text += 'Скорость: {} \n'.format(value)
         self.serial_port.baud_rate = int(value)
 
     def switch_serial(self, value):
         # self.console_text.text += str(self.serial_port)
-        if value == 'Open':
+        if value == 'Подключиться':
             if self.serial_port.open_port():
-                self.id_switch_serial.text = 'Close'
+                self.id_switch_serial.text = 'Отключиться'
                 self.id_indicator.color = [0, 1, 0, 1]
                 self.id_commport.disabled = True
                 self.id_baudrate.disabled = True
             else:
-                self.console_text.text += 'Port {} open failed, please check\n'.format(self.serial_port.select_port)
+                self.console_text.text += '{} подключение к порту завершилось ошибкой\n'.format(self.serial_port.select_port)
 
         else:
-            self.id_switch_serial.text = 'Open'
+            self.id_switch_serial.text = 'Подключиться'
             self.id_indicator.color = [1, 0, 0, 1]
             self.id_commport.disabled = False
             self.id_baudrate.disabled = False
@@ -212,12 +232,9 @@ class Root(FloatLayout):
     def clear_recvdata(self):
         self.console_text.text = ''
 
-    def clear_senddata(self):
-        self.send_text.text = ''
-
     def send_data(self):
         if not self.serial_port.port_opened:
-            self.console_text.text += 'Port not opened yet, please select and click Open.\n'
+            self.console_text.text += 'Устройство ещё не подключено, подключитесь на вкладке "Настройка"\n'
         else:
             self.serial_port.send(self.send_text.text)
 

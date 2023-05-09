@@ -4,8 +4,8 @@
         Color:
             rgba: self.color
         Ellipse:
-            pos: self.center_x / 2 , self.center_y - dp(8)
-            size: dp(16), dp(16)
+            pos: self.center_x , self.center_y
+            size: dp(30), dp(30)
 
 
 <Root>:
@@ -35,7 +35,22 @@
                     padding_x: '2dp'
                 GridLayout:
                     cols: 2
-                    #size_hint_y: 0.5
+#                    size_hint_y: 0.5
+                    Label:
+                        text: ''
+                        size_hint_y: None
+                        text_size: self.size
+                        halign: 'left'
+                        height: '10dp'
+                        size_hint_x: 0.382
+                    Label:
+                        text: ''
+                        size_hint_y: None
+                        text_size: self.size
+                        halign: 'left'
+                        height: '10dp'
+                        size_hint_x: 0.618
+
                     Label:
                         text: 'port'
                         size_hint_y: None
@@ -56,7 +71,7 @@
                         halign: 'center'
 
                     Label:
-                        text: 'baudrate'
+                        text: 'Скорость'
                         size_hint_y: None
                         text_size: self.size
                         halign: 'left'
@@ -71,32 +86,18 @@
                         height: '30dp'
                         on_text: root.on_baudrate_change(self.text)
                         size_hint_x: 0.618
-                    Label:
-                        text: ''
-                        size_hint_y: None
-                        text_size: self.size
-                        halign: 'left'
-                        height: '10dp'
-                        size_hint_x: 0.382
-                    Label:
-                        text: ''
-                        size_hint_y: None
-                        text_size: self.size
-                        halign: 'left'
-                        height: '10dp'
-                        size_hint_x: 0.618
 
                 Indicator:
                     id: id_indicator
-                    size_hint_x: 0.382
+                    size_hint_x: 1
 
                 Button:
                     id: id_switch_serial
                     size_hint_y: None
                     height: dp(50)
-                    text: 'Open'
+                    text: 'Подключиться'
                     on_release: root.switch_serial(self.text)
-                    size_hint_x: 0.618
+#                    size_hint_x: 0.618
             MDBottomNavigationItem:
                 name: 'console'
                 text: 'Консоль'
@@ -143,28 +144,25 @@
                         Button:
                             size: self.parent.width/2, self.parent.height
                             size_hint: None, None
-                            text: 'Clear Receive Area'
+                            text: 'Очистить'
                             on_release: root.clear_recvdata()
                     BoxLayout:
-                        size_hint_y: 0.7
+                        size_hint_y: 0.85
                         TextInput:
                             id: console_text
                             text: ''
                             readonly: True
                     BoxLayout:
-                        size_hint_y: 0.3
+                        size_hint_y: 0.15
                         TextInput:
                             id: send_text
                             text: ''
 
                     BoxLayout:
                         size_hint_y: None
-                        height: '30dp'
+                        height: '20dp'
                         Button:
-                            text: 'Clear Send Area'
-                            on_release: root.clear_senddata()
-                        Button:
-                            text: 'Send'
+                            text: 'Отправить'
                             on_release: root.send_data()
             MDBottomNavigationItem:
                 name: 'charts'
