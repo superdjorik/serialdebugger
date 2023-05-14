@@ -39,12 +39,10 @@ class SerialPort():
 
     def __repr__(self) -> str:
         return 'port: {port}, stop bit: {stopbit}, data bit: {databit}, ' \
-               'checksum: {checksum}, baud rate: {baudrate}, ' \
-               'opened: {opened}'.format(
+               'baud rate: {baudrate}, opened: {opened}'.format(
             port=self.select_port,
             stopbit=self.stop_bits,
             databit=self.data_bits,
-            checksum=self.checksum_bits,
             baudrate=self.baud_rate,
             opened=self.port_opened
         )
