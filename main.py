@@ -26,14 +26,30 @@ class SerialPort():
     data_bits = 8
     baud_rate = 115200
     add_timestamp = False
-    select_port = ''
+    select_port = None
     console_buffer = None
     time_counter = 0
     last_read_counter = 0
     inbuff_number = 0
 
     def __init__(self, console_buffer, read_timeout=100 * 60 / 1000):  # default read timeout 100ms
-        self._ser = Serial()
+        # device_name = Root.id_switch_serial()
+        # print(device_name)
+        if platform == 'android':
+            device_name = '/dev/bus/usb/001/005'
+            device = usb.get_usb_device(device_name)
+            if not device:
+                raise SerialException(
+                    "Device {} not present!".format(device_name)
+                )
+            if not usb.has_usb_permission(device):
+                usb.request_usb_permission(device)
+                return
+            self._ser = serial4a.get_serial_port(device_name, 115200, 8, 'N', 1, timeout=1)
+
+        else:
+            self._ser = Serial()
+
         self.console_buffer = console_buffer
         self.read_timeout = read_timeout
 
@@ -135,14 +151,13 @@ class Root(FloatLayout):
     id_stopbit = ObjectProperty(None)
     id_databit = ObjectProperty(None)
     id_indicator = ObjectProperty(None)
+    id_update_comm_ports = ObjectProperty(None)
     id_switch_serial = ObjectProperty(None)
     id_recv_encode = ObjectProperty(None)
     id_send_encode = ObjectProperty(None)
     id_append_linend_send = ObjectProperty(None)
     id_add_timestamp = ObjectProperty(None)
     serial_port = None
-
-    serial_port_list = []
 
     def __init__(self, **kwargs):
         super(Root, self).__init__(**kwargs)
@@ -170,9 +185,13 @@ class Root(FloatLayout):
             self.serial_port_list = [
                 device.getDeviceName() for device in usb_device_list
             ]
+            for device in usb_device_list:
+                if not usb.has_usb_permission(device):
+                    usb.request_usb_permission(device)
+                    return
         else:
-            usb_device_list = list_ports.comports()
-            self.serial_port_list = [port.device for port in usb_device_list]
+            device_list = list_ports.comports()
+            self.serial_port_list = [port.device for port in device_list]
         #
         #
         # try:
@@ -246,7 +265,7 @@ class SerialDebuggerApp(MDApp):
         self.theme_cls.theme_style = "Dark"
         # self.icon = 'icon.png'
         root = Root()
-        Clock.schedule_interval(root.update_port, 1.0)
+        # Clock.schedule_interval(root.update_port, 1.0)
         Clock.schedule_interval(root.update_serialread, 1.0 / 60)
         return root
 

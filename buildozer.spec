@@ -37,7 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3, pyjnius, kivy==2.1.0, kivymd, usb4a==0.2.0, usbserial4a==0.4.0, android
+requirements = python3, pyjnius, kivy==2.1.0, kivymd, usb4a==0.2.0, usbserial4a==0.4.0, android, pyserial
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -453,3 +453,4 @@ warn_on_root = 1
 #
 #buildozer --profile demo android debug
 android.whitelist = lib-dynload/termios.so
+android.p4a_whitelist = lib-dynload/termios.so

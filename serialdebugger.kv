@@ -52,7 +52,7 @@
                         size_hint_x: 0.618
 
                     Label:
-                        text: 'port'
+                        text: 'Порт'
                         size_hint_y: None
                         text_size: self.size
                         halign: 'left'
@@ -89,8 +89,14 @@
 
                 Indicator:
                     id: id_indicator
-                    size_hint_x: 1
+#                    size_hint_x: 1
 
+                Button:
+                    id: id_update_comm_ports
+                    size_hint_y: 0.25
+                    height: dp(40)
+                    text: 'Сканировать устройства'
+                    on_release: root.update_port(self.text)
                 Button:
                     id: id_switch_serial
                     size_hint_y: None
