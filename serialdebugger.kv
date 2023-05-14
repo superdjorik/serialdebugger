@@ -147,20 +147,20 @@
                             text: 'Очистить'
                             on_release: root.clear_recvdata()
                     BoxLayout:
-                        size_hint_y: 0.85
+                        size_hint_y: 0.7
                         TextInput:
                             id: console_text
                             text: ''
                             readonly: True
                     BoxLayout:
-                        size_hint_y: 0.15
+                        size_hint_y: 0.1
                         TextInput:
                             id: send_text
                             text: ''
 
                     BoxLayout:
                         size_hint_y: None
-                        height: '20dp'
+                        height: '50dp'
                         Button:
                             text: 'Отправить'
                             on_release: root.send_data()
